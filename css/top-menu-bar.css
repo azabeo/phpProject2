@@ -1,0 +1,43 @@
+/* CSS Document */
+
+.top-menu-item { 
+	line-height: 47px;
+	width: auto;
+	
+	-webkit-transition: background-color 0.25s;
+	-moz-transition: background-color 0.25s;
+	-o-transition: background-color 0.25s;
+	transition: background-color 0.25s;
+	
+	position: relative;
+	text-decoration: none;
+
+	display: inline-block;
+	vertical-align: top;
+}
+
+.top-menu-dropdown {
+	position: absolute;
+	height: 0;
+	overflow: hidden;
+	top: 100px;
+	z-index: 3;
+	width: 148px;
+	margin-top: -2px;
+	margin-left: 0px;
+}
+
+.top-menu-dropdown-inner {
+	margin-top: 2px;
+}
+
+.top-menu-dropdown a {
+	text-decoration: none;
+	display: block;
+	
+	-webkit-transition: background-color 0.25s;
+	-moz-transition: background-color 0.25s;
+	-o-transition: background-color 0.25s;
+	transition: background-color 0.25s;
+}
+

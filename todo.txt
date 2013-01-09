@@ -1,0 +1,47 @@
+[2012-10-05]
+    - con file grossi impotazione gtsf non funziona
+
+IDEE
+- importazione con java
+- creare LineString partendo da shapes e inserendo in trips
+- caricare su fusion tables stops e trips (melgio usare kml perchè tanto gli eventi funzionano lo stesso) però 
+per vedere singole routes dovrei fare diversi kml
+- quando si carica la mappa fare la query spaziale che limita ai bounds 
+visualizzati (quando si muove ricarica? comunque serve solo se abbiamo molte 
+compagnie con solo ACTV non serve)
+- linee e stops possono reagire al mouseover (serve solo su PC, i telefoni non hanno mouseover, magari al click)
+
+- si chiama la pagina passando la regione da vedere
+- zoom regione: si vedono i segnalini dei carriers registrati
+- zoom città: si vedono le fermate aggregate
+- zoom strade: si vedono le fermate coi simboli e al mouse over o al click si caricano le routes
+- al click in punto qualsisasi e anch euslle fermate chiede se start o stop e non si chiude fino a che non si da ok
+
+- le routes identificano il numero del bus
+- i trips identificno i vari viaggi ai diversi orari e andata e ritorno
+- ad ogni trip si associano gli stop times, legati agli stops, le shapes legate al percorso e il calendar legagto a quando si effettua quel trip
+- per vedere le shapes come linee bisogna prendere le diverse righe delle coordinate e metterle di seguito secondo il formato che si trova 
+qui: https://developers.google.com/fusiontables/docs/v1/using#Geo
+- siccome la query è lunghissima meglio creare una tabella con il poligono come testo e creare un array da javascript che dopo crea gli oggetti.
+- ogni route ha più trip ma le shape sono in realtà due o tre, quindi prendere le shape e da quelle creare le singole linee e poi associare quelle alle routes
+
+DROP TEMPORARY TABLE IF EXISTS prova.shape_lenght;
+CREATE TEMPORARY TABLE prova.shape_lenght AS
+SELECT temp.route, shapes.id as shape, count(*) as c
+FROM (
+SELECT DISTINCT r.id as route, s.id as shape
+FROM prova.routes r
+INNER JOIN prova.trips t ON r.id = t.idroute
+INNER JOIN prova.shapes s ON t.idshape = s.id
+) temp INNER JOIN shapes ON temp.shape = shapes.id
+GROUP BY temp.route, shapes.id;
+
+DROP TEMPORARY TABLE IF EXISTS shape_route;
+CREATE TEMPORARY TABLE shape_route AS
+SELECT route, max(c) as m
+FROM prova.shape_lenght
+GROUP BY route;
+
+SELECT a.route, min(a.shape) as shape, s.m
+FROM prova.shape_lenght a inner join prova.shape_route s on a.route = s.route and a.c = s.m
+GROUP BY a.route, s.m;
