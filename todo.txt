@@ -1,3 +1,6 @@
+FARE QUERY PER STOPS SENZA STORED PROC USANDO IL FATTO CHE UN GRADO di LON A 45 DI LAT SONO 78 km
+
+
 [2012-10-05]
     - con file grossi impotazione gtsf non funziona
 

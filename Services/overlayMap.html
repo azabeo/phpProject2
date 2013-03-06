@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+        <meta charset="utf-8">
+        <title>mappa</title>
+        <style type="text/css">
+            html { height: 100% }
+            body { height: 100%; margin: 0; padding: 0 }
+            #map_canvas { height: 100% }
+        </style>
+        <script type="text/javascript"
+                src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCgtOJrO3H80rrg5GMs-GJIAolH78j5fZw&libraries=geometry&sensor=false">
+        </script>
+        <script type="text/javascript" src="utility/mapUtilities.js"></script>
+        <script type="text/javascript">
+            
+            // http://localhost/PhpProject2/services/overlaymap.html?0=45.088090,7.651969999999999,W|45.071350,7.674420000000001,B&1=qgerGyoum@@G|RlLf@kB?ApBcLPoBrAiO@o@qAQlF_PzIaXjHmTr@cApIeMt@u@xCbBd@IKi@W_@FUh@}BbJfG%60Ah@%60Aj@RZVBPOHo@Sc@tLse@PJ&2=}~arGc|ym@OKhFuSy@qUm@yPPyA%60@cB|@qDAq@YgAB[vKaSnH{M%60IwNvBoDtE}H%60CyE%60@Hr@SxByDLP&3=45.061730,7.699400000000002
+            
+            function log(text){
+                var myDiv = document.getElementById("log");
+                myDiv.innerHTML = myDiv.innerHTML + "<br/>" + text;
+            }
+
+            function initialize() {
+                
+                var sep1 = "|";
+                var sep2 = ",";
+                
+                var prmstr = decodeURIComponent(window.location.search.substr(1));
+                var prmarr = prmstr.split ("&");
+                var params = new Array(); 
+                var markers = new Array(); 
+                var lines = new Array(); 
+                var types = new Array();
+
+                for ( var i = 0; i < prmarr.length; i++) {
+                    var tmparr = prmarr[i].split("=");
+                    params[i] = tmparr[1];
+                }
+                
+                var h = params[0].split(sep1);
+                for(var i = 0; i < h.length; i++){
+                    var tmp = h[i].split(sep2);
+                    markers[i] = getMarker(tmp[0],tmp[1],tmp[2]);
+                    types[i] = tmp[2];
+                }
+                
+                var tmp = params[params.length-1].split(sep2);
+                markers[markers.length] = getMarker(tmp[0],tmp[1],"F");
+                
+                for(var i = 1; i < params.length-1; i++){
+                    lines[i-1] = getPath(decodeURIComponent((params[i] + '').replace(/\+/g, '%20')),types[i-1]);
+                }
+                    
+                var bounds = new google.maps.LatLngBounds();
+                markers.forEach(function(e) {
+                    bounds = bounds.extend(e.getPosition());
+                });
+                                
+                lines.forEach(function(e) {                    
+                    bounds = bounds.extend(e.getBounds().getNorthEast());
+                    bounds = bounds.extend(e.getBounds().getSouthWest());
+                });
+                
+                map = new google.maps.Map(document.getElementById('map_canvas'), {
+                    center: bounds.getCenter(),
+                    zoom: 0, 
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                });
+                
+                map.fitBounds(bounds);   
+
+                markers.forEach(function(e) {
+                    e.setMap(map);
+                });
+                
+                lines.forEach(function(e) {
+                    e.setMap(map);
+                });
+            }
+            
+            /*
+            function getFor(type,what){
+                // Walk, Bus, Subway, Tram, Finish
+                var icons = {
+                    W:"http://maps.google.com/mapfiles/marker_grey.png"
+                    ,B:"http://maps.google.com/mapfiles/marker_black.png"
+                    ,S:"http://maps.google.com/mapfiles/marker_black.png"
+                    ,T:"http://maps.google.com/mapfiles/marker_black.png"
+                    ,F:"http://maps.google.com/mapfiles/marker_green.png"
+                    ,def:"http://maps.google.com/mapfiles/marker_black.png"
+                }; 
+                
+                var cols = {
+                    W:"red"
+                    ,B:"orange"
+                };
+                
+                var ret;
+                
+                switch(what){
+                    case "icon":
+                        ret = icons;
+                        break;
+                    case "color":
+                        ret = cols;
+                        break;
+                }
+                
+                return ret[type];
+                
+            }
+            
+            function getMarker(lat, lon, type){
+                 
+                return new google.maps.Marker({
+                    position: new google.maps.LatLng(lat,lon)
+                    //,map: map
+                    //,title:"Hello World!"
+                    ,icon: getFor(type,"icon")
+                });
+                
+                
+                 * Numbered marker: http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=7|FF0000|000000
+                 * Text marker: http://chart.apis.google.com/chart?chst=d_map_spin&chld=1|0|FF0000|12|_|foo
+                 
+            } 
+            
+            function getPath(encodedPath, type){
+                var decodedPath = google.maps.geometry.encoding.decodePath(encodedPath); 
+                                
+                return new google.maps.Polyline({
+                    path: decodedPath
+                    //levels: decodedLevels,
+                    ,strokeColor: getFor(type,"color")
+                    ,strokeOpacity: 1.0
+                    ,strokeWeight: 2
+                });
+            }
+            
+            google.maps.Polyline.prototype.getBounds = function() {
+                var bo = new google.maps.LatLngBounds();
+                this.getPath().forEach(function(e) {
+                    bo = bo.extend(e);
+                });
+                return bo;
+            };
+        */
+        </script>
+    </head>
+    <body onload="initialize()">
+        <!-- <div id="log">a</div> -->
+        <div id="map_canvas" style="width:100%; height:100%;"></div>
+    </body>
+</html>

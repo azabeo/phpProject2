@@ -1,0 +1,16 @@
+DA TERMINALE
+
+tutto assieme:
+mysqldump -uroot -proot ipmobman2 > ipmobman_no_pri.sql
+
+tabelle separate:
+for I in $(mysql -uroot -proot -e 'show tables' -s --skip-column-names ipmobman2); do mysqldump -uroot -proot ipmobman2 $I > "$I.sql"; done
+
+for I in $(mysql -uroot -proot -e 'show tables' -s --skip-column-names ipmobman2); do mysqldump -uroot -proot ipmobman2 $I | gzip > "$I.sql.gz"; done
+
+elimina primary keys:
+for I in $(mysql -uroot -proot -e 'show tables' -s --skip-column-names ipmobman2); do mysql -uroot -proot -e "alter table $I drop primary key" -s ipmobman2 ; done
+
+
+http://ipmobman.comze.com/Services/overlayMap.html?0=45.08818000000001,7.651829999999999,W|45.08557,7.655870000000001,T|45.06436,7.650150000000001,T|45.06414,7.6969,W&1=cherG}num@h@ZJ[HGNI`@K^gBH[DE@CNId@Sx@qD`BqGNq@j@uBVDXDd@@&1=ywdrGehvm@@Q~JnAfI]~COrHi@x@GxOKxAARVVBREPWD[~CXfPzA~Ed@l@\Zp@JhBhHtFv@n@bRvObCfBr@h@LrC|AwFDB&1=gs`rGmdum@EEjD}L`G}SpCyJlE{OlJu\bFmQj@sB~@cBlH}Jf@s@Zm@t@eCdBiHpAkJPgB|BsTH{@`D}Lr@mCuMyIsKiH_OyJs@e@L_AxBwIVcA?cAaO_LoAaAIs@e@}@_HeJKMcE}FDG&1={q`rGsh~m@XJLR@ADIbEmHRc@XVTTb@h@lAjAv@t@NR\`@&2=45.0615,7.69713
+http://ipmobman.comze.com/Services/overlayMap.html?0=45.08818000000001,7.651829999999999,W%7C45.08557,7.655870000000001,T%7C45.06436,7.650150000000001,T%7C45.06414,7.6969,W&1=cherG%7Dnum@h@ZJ%5BHGNI%60@K%5EgBH%5BDE@CNId@Sx@qD%60BqGNq@j@uBVDXDd@@&1=ywdrGehvm@@Q~JnAfI%5D~COrHi@x@GxOKxAARVVBREPWD%5B~CXfPzA~Ed@l@%5CZp@JhBhHtFv@n@bRvObCfBr@h@LrC%7CAwFDB&1=gs%60rGmdum@EEjD%7DL%60G%7DSpCyJlE%7BOlJu%5CbFmQj@sB~@cBlH%7DJf@s@Zm@t@eCdBiHpAkJPgB%7CBsTH%7B@%60D%7DLr@mCuMyIsKiH_OyJs@e@L_AxBwIVcA?cAaO_LoAaAIs@e@%7D@_HeJKMcE%7DFDG&1=%7Bq%60rGsh~m@XJLR@ADIbEmHRc@XVTTb@h@lAjAv@t@NR%5C%60@&2=45.0615,7.69713
